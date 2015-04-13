@@ -8,7 +8,7 @@
 
 [丸の内Neo4j勉強会 #1 - DoorKeeper](https://maruneo4j.doorkeeper.jp/events/23594)
 
-![marunouchi.neo4j logo]()
+![marunouchi.neo4j logo](https://github.com/rinrin0108/marunouchi-neo4j/blob/master/logo.png?raw=true)
 
 # 流れ
 * 懇親会の出席を取る
