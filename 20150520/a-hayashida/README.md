@@ -18,11 +18,23 @@
 
 * Javaで書かれたオープンソースのグラフ型データベース。
 * 開発元はNeo Technology社。
-* ACIDトランザクションが確保されている。（スケールしても同様）
-* スケーラビリティが高い。シャーディングによってスケール可能。
+* ノード（単一データ）単位のACIDトランザクションが確保されている。（スケールしても同様）
+* 可用性向上やリードレプリカ作成のため、マスタデータベースの複製が可能。ただし、データ分散は不可能（2.2.x）。
 * 「Cypher（サイファー)」と呼ばれるデータ操作用クエリ言語が用意されており、クエリはトラバーサル（ある単位のクエリ実行結果をバケツリレーのように次のクエリのインプットに使うこと）で実行される。
 * リッチなWebインターフェースからクエリ実行結果を見たり、クエリのチューニングをしたりすることができる。
+* Webインターフェース以外にも、Neo4jシェルやREST API等、複数の方法でクエリ発行が可能。
 * 導入事例が多く、グラフ型データベースの中で最も有名（だと思う）。
+
+
+## Neo4jのデータモデル
+
+* ノード：グラフデータの最小単位。
+  - ラベル：ノードのグループ名。「キー:バリュー」形式。たとえば、「person:人」
+  - 属性：ノードが持つ属性。json形式で指定できる。たとえば、「{name: "林田", sex: "男", age: "27"}」
+  - 関係性：他ノードとの関係性。
+* 関係性
+  - タイプ：関係性の種類。たとえば、「(person:人 { name: "林田"})-[relations:FRIENDS]->(person:人 { name: "北沢"})」
+  - 属性：関係性が持つ属性。たとえば、「relations.rating=5」
 
 
 ## Neo4jのインストールと起動
@@ -37,6 +49,10 @@
 ## ディレクトリ構成について（neo4j-community-2.2.1の場合）
 
 * bin/：Neo4jのバイナリ群が格納されているディレクトリ。
+  - Neo4j.bat：Neo4j本体。
+  - Neo4jImport.bat：データインポート用。CSV形式やJSON形式で大量データのアップロードが可能。
+  - Neo4jInstaller.bat：インストーラ。
+  - Neo4jShell.bat：主にバッチ処理のために用意されているシェル（CUI）。
 * conf/：設定ファイル群が格納されているディレクトリ。
   - custom-logback.xml：データベース用のログ設定ファイル。標準的なlogback(log4jの開発者が作った後継的な実装)オプションが設定可能。
   - neo4j-http-logging.xml：HTTP REST用のログ設定ファイル。標準的なlogbackオプションが設定可能。
@@ -68,18 +84,32 @@
   - iマーク：リファレンスや操作ガイド、データサンプル等を見ることができる。
 
 
-## Hello Worldしてみる
+## Neo4jシェルの利用
 
-1. 星マーク＞General＞Create a node をクリック
-2. 画面右側にCypherで書かれたクエリが表示される（クエリの意味はこの後の発表で解説予定？）
+1. bin ディレクトリにあるスクリプトを実行。
+ - Linux/MacOS の場合：NEO4J_HOME/bin/neo4j-shell を実行
+ - Windows の場合：%NEO4J_HOME%\bin\Neo4jShell.bat を実行
+
+
+## REST APIの利用
+
+1. http://localhost:7474/db/data/ のようなURLにアクセス。
+2. ブラウザからやってみると認証エラーが返却されるが、Basic認証ヘッダを付加してGETリクエストを投げることで結果を取得可能。★今後REST APIを使ったアプリも作ってみたい。
+  - REST APIのドキュメントは[こちら](http://neo4j.com/docs/milestone/rest-api.html)。
+
+
+## Hello Worldしてみる（Webインターフェースを利用）
+
+1. Webインターフェースにログイン
+2. 星マーク＞General＞Create a node をクリック
+3. 画面右側にCypherで書かれたクエリが表示される（クエリの意味はこの後の発表で解説予定？）
+4. 画面右端の再生ボタンをクリックしてクエリ実行
+5. 表形式で「Hello World」が返却される
 
 <pre>
 // Create a node
 CREATE (n {name:"World"}) RETURN "hello", n.name
 </pre>
-
-3. 画面右端の再生ボタンをクリックしてクエリ実行
-4. 表形式で「Hello World」が返却される
 
 
 ## Neo4jを終了する
@@ -96,4 +126,5 @@ CREATE (n {name:"World"}) RETURN "hello", n.name
 
 ##参考サイト
 
+* [CL LAB Neo4j-グラフデータベースとは](http://www.creationline.com/lab/7168)
 * [Neo4jで学ぶGraph DB入門](http://www.omotenashi-mind.com/index.php/Neo4j%E3%81%A7%E5%AD%A6%E3%81%B6Graph_DB%E5%85%A5%E9%96%80)
